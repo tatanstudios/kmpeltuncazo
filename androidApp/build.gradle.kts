@@ -11,7 +11,7 @@ android {
         applicationId = "com.tatanstudios.eltuncazometapan"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 12
+        versionCode = 13
         versionName = "3.0.0"
     }
 
@@ -20,6 +20,11 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Incluye en el .aab los símbolos del código nativo (.so de las librerías),
+            // así Play Console muestra fallos nativos legibles y no avisa de "símbolos de depuración".
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
         }
     }
     compileOptions {
