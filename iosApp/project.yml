@@ -46,7 +46,7 @@ targets:
         # En Debug, el script "Permitir http en Debug" (abajo) lo habilita para el servidor local.
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.tatanstudios.eltuncazometapan
+        PRODUCT_BUNDLE_IDENTIFIER: com.tatanstudios.eltuncazo
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         OTHER_LDFLAGS: ["$(inherited)", "-framework", "ComposeApp"]
         FRAMEWORK_SEARCH_PATHS:
