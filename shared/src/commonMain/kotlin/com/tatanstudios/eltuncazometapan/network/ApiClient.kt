@@ -16,13 +16,14 @@ import kotlinx.serialization.json.Json
  * El motor HTTP lo pone cada plataforma: OkHttp en Android, Darwin (NSURLSession) en iOS.
  */
 object ApiConfig {
-    //** SERVIDOR (todavía sin Laravel Sanctum)
-    // const val BASE_URL = "http://165.22.176.229/api/"
-    // const val URL_IMAGENES = "http://165.22.176.229/storage/imagenes/"
+    //** SERVIDOR: se usa el subdominio, no la IP. Si cambias de VPS, solo actualiza
+    //** el registro DNS (tipo A) de eltuncazo.tatancloud.com; la app no se toca.
+    const val BASE_URL = "https://eltuncazo.tatancloud.com/api/"
+    const val URL_IMAGENES = "https://eltuncazo.tatancloud.com/storage/imagenes/"
 
     //** LOCAL: php artisan serve --host=192.168.1.4 --port=8080
-    const val BASE_URL = "http://192.168.1.4:8080/api/"
-    const val URL_IMAGENES = "http://192.168.1.4:8080/storage/imagenes/"
+    // const val BASE_URL = "http://192.168.1.4:8080/api/"
+    // const val URL_IMAGENES = "http://192.168.1.4:8080/storage/imagenes/"
 }
 
 /** JSON tolerante, igual de permisivo que Gson con las respuestas del backend Laravel. */

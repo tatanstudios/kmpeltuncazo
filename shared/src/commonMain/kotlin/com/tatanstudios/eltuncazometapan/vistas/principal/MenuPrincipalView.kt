@@ -248,20 +248,28 @@ fun MenuPrincipalScreen(
 private fun TarjetaCategoria(categoria: ModeloMenuPrincipalCategoriasArray, onClick: () -> Unit) {
     val ctx = LocalPlatformContext.current
 
+    // Sin .clip() en el modifier: recortaba la sombra y la card se perdía en el fondo crema.
+    // Borde + sombra + margen interno para que se vea claramente como tarjeta.
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp, pressedElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, Color(0xFFE6DFD6))
     ) {
+        // Proporción real de la imagen (ancho / alto). Mientras carga se usa 16:9 y,
+        // al llegar la imagen, la tarjeta toma su forma para mostrarla completa sin recortes.
+        var proporcion by remember(categoria.imagen) { mutableStateOf(16f / 9f) }
+
         Box(
             modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp, top = 10.dp)
                 .fillMaxWidth()
-                .aspectRatio(2f) // un poco más baja que antes (16:9) para ver más bloques
+                .aspectRatio(proporcion)
+                .clip(RoundedCornerShape(12.dp))
                 .background(Color(0xFFF5F5F5)),
             contentAlignment = Alignment.Center
         ) {
@@ -276,7 +284,14 @@ private fun TarjetaCategoria(categoria: ModeloMenuPrincipalCategoriasArray, onCl
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
                 onLoading = { cargando = true },
-                onSuccess = { cargando = false },
+                onSuccess = { estado ->
+                    cargando = false
+                    val tam = estado.painter.intrinsicSize
+                    if (tam.width > 0f && tam.height > 0f) {
+                        // Límite para que una imagen muy alta o muy estirada no rompa la lista
+                        proporcion = (tam.width / tam.height).coerceIn(1f, 3f)
+                    }
+                },
                 onError = { cargando = false },
                 error = painterResource(Res.drawable.camaradefecto),
             )
