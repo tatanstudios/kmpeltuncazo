@@ -1,0 +1,70 @@
+# Proyecto Xcode generado con XcodeGen (https://github.com/yonaskolb/XcodeGen)
+# En la Mac:  brew install xcodegen  &&  cd iosApp && xcodegen generate
+name: iosApp
+options:
+  bundleIdPrefix: com.tatanstudios
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  # Notificaciones push (Swift Package Manager). En Android va por Gradle.
+  OneSignal:
+    url: https://github.com/OneSignal/OneSignal-XCFramework
+    from: 5.0.0
+settings:
+  base:
+    MARKETING_VERSION: "3.0.0"
+    CURRENT_PROJECT_VERSION: "12"
+    DEVELOPMENT_TEAM: ""   # Poner aquí tu Team ID de Apple
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: iosApp
+    dependencies:
+      - package: OneSignal
+        product: OneSignalFramework
+      - package: OneSignal
+        product: OneSignalInAppMessages
+    # capacidad "Push Notifications" (Xcode cambia a production al exportar para App Store)
+    entitlements:
+      path: iosApp/iosApp.entitlements
+      properties:
+        aps-environment: development
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: El Tuncazo
+        # recibir notificaciones en segundo plano
+        UIBackgroundModes: [remote-notification]
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        CADisableMinimumFrameDurationOnPhone: true
+        # El servidor usa HTTP sin TLS. Quitar esta excepción cuando el backend tenga HTTPS.
+        NSAppTransportSecurity:
+          # permite http a la red local (pruebas contra php artisan serve en la PC)
+          NSAllowsLocalNetworking: true
+          NSExceptionDomains:
+            165.22.176.229:
+              NSExceptionAllowsInsecureHTTPLoads: true
+              NSIncludesSubdomains: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tatanstudios.eltuncazometapan
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        OTHER_LDFLAGS: ["$(inherited)", "-framework", "ComposeApp"]
+        FRAMEWORK_SEARCH_PATHS:
+          - "$(inherited)"
+          - "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+    preBuildScripts:
+      - name: Compilar Kotlin (shared)
+        basedOnDependencyAnalysis: false
+        script: |
+          if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+            echo "Omitiendo Gradle: OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES"
+            exit 0
+          fi
+          cd "$SRCROOT/.."
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode
