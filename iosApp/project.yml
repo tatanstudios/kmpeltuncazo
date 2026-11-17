@@ -66,5 +66,9 @@ targets:
             echo "Omitiendo Gradle: OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED=YES"
             exit 0
           fi
+          # Xcode no hereda JAVA_HOME: usar el JDK de Android Studio si no hay otro
+          if [ -z "$JAVA_HOME" ] && [ -d "/Applications/Android Studio.app/Contents/jbr/Contents/Home" ]; then
+            export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+          fi
           cd "$SRCROOT/.."
-          ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+          sh ./gradlew :shared:embedAndSignAppleFrameworkForXcode

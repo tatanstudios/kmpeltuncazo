@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -173,27 +174,42 @@ fun CustomModal2Botones(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         // Botón Cancelar (Gris claro)
+                        // padding horizontal reducido: en iOS el diálogo es más angosto
+                        // y con el padding por defecto (24dp) el texto se partía en 2 líneas
+                        val paddingBoton = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
                         Button(
                             onClick = onDismiss,
                             modifier = Modifier.weight(1f),
+                            contentPadding = paddingBoton,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = AppColors.colorGrisv2,
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(txtBtnCancelar)
+                            Text(
+                                txtBtnCancelar,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
                         }
 
                         // Botón Aceptar (Verde)
                         Button(
                             onClick = onAccept,
                             modifier = Modifier.weight(1f),
+                            contentPadding = paddingBoton,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = AppColors.colorVerde, // Verde
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(txtBtnAceptar)
+                            Text(
+                                txtBtnAceptar,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
