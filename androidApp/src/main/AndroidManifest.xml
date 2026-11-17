@@ -15,7 +15,6 @@
         android:label="El Tuncazo"
         android:roundIcon="@mipmap/logoappv3_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.ElTuncazoCompose">
         <activity
             android:name=".MainActivity"

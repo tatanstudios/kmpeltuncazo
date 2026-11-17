@@ -42,14 +42,8 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         CADisableMinimumFrameDurationOnPhone: true
-        # El servidor usa HTTP sin TLS. Quitar esta excepción cuando el backend tenga HTTPS.
-        NSAppTransportSecurity:
-          # permite http a la red local (pruebas contra php artisan serve en la PC)
-          NSAllowsLocalNetworking: true
-          NSExceptionDomains:
-            165.22.176.229:
-              NSExceptionAllowsInsecureHTTPLoads: true
-              NSIncludesSubdomains: true
+        # Sin NSAppTransportSecurity: en Release solo se permite https.
+        # En Debug, el script "Permitir http en Debug" (abajo) lo habilita para el servidor local.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tatanstudios.eltuncazometapan
@@ -72,3 +66,18 @@ targets:
           fi
           cd "$SRCROOT/.."
           sh ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+    postBuildScripts:
+      # Solo en Debug (botón ▶ de Xcode): permite http para probar contra php artisan serve.
+      # Release (Archive para App Store) no pasa por aquí: queda solo https.
+      - name: Permitir http en Debug
+        basedOnDependencyAnalysis: false
+        inputFiles:
+          - $(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)
+        script: |
+          if [ "$CONFIGURATION" != "Debug" ]; then
+            exit 0
+          fi
+          PLIST="${TARGET_BUILD_DIR}/${INFOPLIST_PATH}"
+          /usr/libexec/PlistBuddy -c "Delete :NSAppTransportSecurity" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSAppTransportSecurity dict" -c "Add :NSAppTransportSecurity:NSAllowsArbitraryLoads bool true" "$PLIST"
+          echo "Debug: http permitido (NSAllowsArbitraryLoads) para pruebas locales"

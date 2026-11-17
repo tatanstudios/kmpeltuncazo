@@ -337,8 +337,6 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel = vi
         // ── RESULTADO API ──────────────────────────────────────────
         resultado?.getContentIfNotHandled()?.let { result ->
 
-            println("LOGIN_RESULT: " + "success: ${result.success}, id: ${result.id}, mensaje: ${result.mensaje}")
-
             when (result.success) {
                 1 -> {
                     // INICIO DE SESION

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Solo para la versión DEBUG (la que corre desde Android Studio).
+    Permite http para probar contra el servidor local (php artisan serve).
+    La versión RELEASE (la que se sube a Play Store) no lo incluye: solo https.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application android:usesCleartextTraffic="true" />
+
+</manifest>
