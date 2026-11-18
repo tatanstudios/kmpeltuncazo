@@ -11,8 +11,8 @@ android {
         applicationId = "com.tatanstudios.eltuncazometapan"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 13
-        versionName = "3.0.0"
+        versionCode = 14
+        versionName = "3.0.1"
     }
 
     buildTypes {

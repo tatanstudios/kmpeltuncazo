@@ -10,3 +10,5 @@ build/
 .cxx
 xcuserdata/
 iosApp/Pods/
+
+/androidApp/release/

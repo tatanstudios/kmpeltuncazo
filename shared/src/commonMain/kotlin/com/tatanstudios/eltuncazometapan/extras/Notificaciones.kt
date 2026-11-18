@@ -21,18 +21,33 @@ interface PuenteNotificaciones {
 
 object Notificaciones {
 
+    /**
+     * External ID que se registra en OneSignal. Lleva prefijo porque OneSignal rechaza en silencio
+     * valores genéricos como "0", "1" o "-1" (el cliente 1 nunca quedaba vinculado).
+     * El servidor (App\Services\Notificaciones) usa el mismo formato.
+     */
+    fun externalId(idCliente: String) = "cliente_$idCliente"
+
     /** Lo asigna cada plataforma al iniciar la app. Si es null (ej. pruebas), no se hace nada. */
     var puente: PuenteNotificaciones? = null
 
     fun iniciarSesion(idCliente: String) {
-        if (idCliente.isBlank()) return
-        runCatching {
-            puente?.iniciarSesion(idCliente)
-            puente?.pedirPermiso()
+        if (idCliente.isBlank()) {
+            println("TuncazoPush: sin sesión, no se vincula el teléfono")
+            return
         }
+        if (puente == null) {
+            println("TuncazoPush: puente es null, OneSignal no está registrado en esta plataforma")
+            return
+        }
+        runCatching {
+            puente?.iniciarSesion(externalId(idCliente))
+            puente?.pedirPermiso()
+        }.onFailure { println("TuncazoPush: error al vincular cliente $idCliente: $it") }
     }
 
     fun cerrarSesion() {
         runCatching { puente?.cerrarSesion() }
+            .onFailure { println("TuncazoPush: error al cerrar sesión: $it") }
     }
 }
